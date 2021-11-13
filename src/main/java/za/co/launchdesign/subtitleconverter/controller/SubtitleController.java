@@ -7,11 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import za.co.launchdesign.subtitleconverter.model.RequestObject;
 import za.co.launchdesign.subtitleconverter.service.ConverterService;
 
 import java.io.*;
@@ -24,11 +22,12 @@ public class SubtitleController {
     private ConverterService converterService;
 
     @PostMapping("/convert")
-    public ResponseEntity<byte[]> convertFIle(@RequestParam("file") MultipartFile file,@RequestBody RequestObject requestObject ) {
+    public ResponseEntity<byte[]> convertFIle(@RequestParam("file") MultipartFile file, @RequestParam("title") String title,
+                                              @RequestParam("season") String season,@RequestParam("episode") String episode ) {
         try {
-            XSSFWorkbook convertedFile = converterService.convertFile(file, requestObject.getTitle(),
-                    requestObject.getSeason(), requestObject.getEpisode());
+            XSSFWorkbook convertedFile = converterService.convertFile(file, title, season, episode);
             if (convertedFile != null) {
+
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 convertedFile.write(baos);
                 return new ResponseEntity<>(baos.toByteArray(), HttpStatus.OK);
